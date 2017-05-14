@@ -1,0 +1,113 @@
+<html>
+    <!DOCTYPE html>
+ <body>
+ </body>
+<audio id="connasse" src="./sound/Connasse_va.mp3" preload="auto"></audio>
+<script src="./js/game.js"></script>
+<script src="./js/Ennemy.js"></script>
+<script src="./js/game.display.js"></script>
+<script>
+// début du code isolé
+(function () {
+    
+    var KEY_LEFT = 37;
+    var KEY_RIGHT = 39;
+	var LEFT = false;
+    var RIGHT = false;
+    var ennemies;
+    var gay;
+    
+    var numberOfEnnemies = 2;
+    var ennemies;
+    
+    function createEnnemies(number){
+      var array =[]
+      for (var i = 0; i < number; i++) {
+          array[i] = new Ennemy (game.ennemyLayer, 1, Math.floor((Math.random() * 600) + 0), 0, 10, 10, "#ADADAD", Math.floor((Math.random() * 3) + 0.5), Math.floor((Math.random() * 3) + 0.5));
+      }
+        return array;
+    }
+    
+    var requestAnimId;
+    var time = Math.floor((Math.random() * 500) + 100);
+;
+    
+    var initialisation = function() {
+
+        game.init();
+        ennemies = createEnnemies(numberOfEnnemies);
+       
+     requestAnimId = window.requestAnimationFrame(principale); // premier appel de principale au rafraichissement de la page
+ }
+ 
+ var principale = function() {
+
+        
+    // while ( this.time !== 0){
+       
+         game.ennemyLayer.context2D.clearRect(0, 0, game.aquaWidth, game.aquaHigh + game.offsetAir);
+         game.moveFish();
+         for (var i = 0; i < numberOfEnnemies; i++) {
+          ennemies[i].move();
+          ennemies[i].display();
+          ennemies[i].shieldCollision();
+          ennemies[i].fishCollision();
+      }
+       
+         detectTouch();
+         game.sAngle = (game.sAngle+game.incL)%game.twoPI;
+         game.eAngle = (game.eAngle+game.incR)%game.twoPI;
+         game.displayShield(game.ennemyLayer, game.fish.posX+game.fish.width/2, game.fish.posY+game.fish.height/2, game.radiusShield, game.sAngle, game.eAngle, true);
+
+ 
+         time --;
+         if(time == 1){
+             time = Math.floor((Math.random() * 500) + 100);
+             game.fish.incX = (Math.random()) * game.speedFish;
+             game.fish.incY = (Math.random()) * game.speedFish;
+             game.fish.dirX = Math.random() < 0.5 ? true : false;
+             game.fish.dirY = Math.random() < 0.5 ? true : false;
+         requestAnimId = window.requestAnimationFrame(principale); // rappel de principale au prochain rafraichissement de la page
+         }
+         else{
+             
+             requestAnimId = window.requestAnimationFrame(principale);
+         }
+ }
+ 
+  var onKeyDown = function(event) {
+        if ( event.keyCode == KEY_LEFT ) {
+            LEFT = true;
+        } else if ( event.keyCode == KEY_RIGHT ) {
+            RIGHT = true;
+        }
+    }
+ 
+    var onKeyUp = function(event) {
+        if ( event.keyCode == KEY_LEFT ) {
+            LEFT = false;
+        } else if ( event.keyCode == KEY_RIGHT ) {
+            RIGHT = false;
+        }
+    }
+    
+    
+    var detectTouch = function(){        
+       if (LEFT){
+        game.sAngle = game.sAngle -0.1;
+        game.eAngle = game.eAngle -0.1
+       }
+      else if (RIGHT){
+        game.sAngle = game.sAngle +0.1;
+        game.eAngle = game.eAngle +0.1
+      }
+        
+    }
+    
+ window.onkeydown = onKeyDown;
+ window.onkeyup = onKeyUp;
+ window.onload = initialisation; // appel de la fonction initialisation au chargement de la page
+})();
+// fin du code isolé
+</script>
+</html>
